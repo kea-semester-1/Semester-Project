@@ -28,7 +28,7 @@ class CharacterDTO(OrmBasicModel):
 class CharacterInputDTO(BaseModel):
     """Character input DTO."""
 
-    base_class_id: UUID
+    base_class_id: int
     user_id: UUID
     gender: Gender
     character_name: str = Field(..., min_length=1, max_length=50)
