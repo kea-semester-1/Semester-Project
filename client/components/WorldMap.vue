@@ -279,7 +279,7 @@ function move(direction) {
   // Send the updated location to the server
   const locationUpdate = {
     type: 'updateLocation',
-    playerId: player.id, // Make sure 'player.id' is the unique identifier of the player
+    playerId: player.id, // must be unique identifier
     newLocation: player.character_location
   };
   ws.value.send(JSON.stringify(locationUpdate));

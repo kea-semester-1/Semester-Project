@@ -17,8 +17,6 @@ const props = defineProps({
     player: Object
 });
 
-
-// Reactive reference for serverUrl
 const serverUrl = ref('');
 
 const setupWebSocketConnection = () => {
@@ -58,7 +56,7 @@ const sendMessage = () => {
     if (messageInput.value.trim() !== '') {
         const messageToSend = `${props.player.character_name}: ${messageInput.value}`;
         ws.value.send(messageToSend); // Send the message
-        messageInput.value = ''; // Clear input field
+        messageInput.value = '';
     }
 };
 

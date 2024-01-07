@@ -1,5 +1,4 @@
 from fastapi import APIRouter, WebSocket
-from rpg_api.utils import dtos
 import json
 from pydantic import BaseModel
 
@@ -7,6 +6,8 @@ websocket_router = APIRouter()
 
 
 class ChatConnectionManager:
+    """Connection manager for the chat."""
+
     def __init__(self) -> None:
         self.active_connections: dict[str, list[WebSocket]] = {}
 
@@ -29,16 +30,22 @@ class ChatConnectionManager:
 
 
 class PlayerLocation(BaseModel):
+    """Player location."""
+
     x: int
     y: int
 
 
 class Player(BaseModel):
+    """Player dto."""
+
     id: str
     location: PlayerLocation
 
 
 class PlayerConnectionManager:
+    """Player connection manager, handles player location."""
+
     def __init__(self) -> None:
         self.active_players: dict[str, Player] = {}
         self.active_connections: dict[str, WebSocket] = {}
@@ -69,13 +76,14 @@ manager = ChatConnectionManager()
 async def websocket_endpoint(
     websocket: WebSocket, location: str, client_id: str
 ) -> None:
+    """Chat endpoint."""
     await manager.connect(websocket, location)
     try:
         while True:
             data = await websocket.receive_text()
             # Send message only to clients in the same location
             await manager.broadcast(data, location)
-    except Exception as e:
+    except Exception:
         manager.disconnect(websocket, location)
 
 
@@ -84,6 +92,7 @@ player_manager = PlayerConnectionManager()
 
 @websocket_router.websocket("/ws/location/{player_id}")
 async def player_location_websocket(websocket: WebSocket, player_id: str) -> None:
+    """Player movement endpoint."""
     print(player_id)
     await player_manager.connect(player_id, websocket)
     try:
