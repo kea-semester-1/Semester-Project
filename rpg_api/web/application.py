@@ -8,6 +8,8 @@ from rpg_api.logging import configure_logging
 from rpg_api.web.api.router import api_router
 from rpg_api.web.lifetime import register_shutdown_event, register_startup_event
 
+from rpg_api.web.api.websockets.router import websocket_router
+
 
 def get_app() -> FastAPI:
     """
@@ -41,5 +43,6 @@ def get_app() -> FastAPI:
 
     # Main router for the API.
     app.include_router(router=api_router, prefix="/api")
+    app.include_router(websocket_router)
 
     return app

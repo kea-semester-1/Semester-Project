@@ -1,28 +1,24 @@
 <template>
-  <div>
-    <p>
-      Go to characters page:
-      <router-link to="/characters">Characters</router-link>
-    </p>
-    <h1>World</h1>
-    <h2>Character</h2>
-    <p>
-      Name: {{ characterName }} Gender: {{ character.gender }} Alive:
-      {{ character.alive }} Level: {{ character.level }} XP:
-      {{ character.xp }} Money: {{ character.money }} Class:
-      {{ character.base_class.name }} ID: {{ character.id }}
-    </p>
-    <WorldMap
-    data-test="enterWorld"
-      :player="character"
-      :height="500"
-      :width="500"
-      :scale="scale"
-      @moveUp="moveUp"
-      @moveDown="moveDown"
-      @moveLeft="moveLeft"
-      @moveRight="moveRight"
-    />
+  <div class="main-container">
+    <div>
+      <p>
+        Go to characters page:
+        <router-link to="/characters">Characters</router-link>
+      </p>
+      <h1>World</h1>
+      <h2>Character</h2>
+      <p>
+        Name: {{ characterName }} Gender: {{ character.gender }} Alive:
+        {{ character.alive }} Level: {{ character.level }} XP:
+        {{ character.xp }} Money: {{ character.money }} Class:
+        {{ character.base_class.name }} ID: {{ character.id }}
+      </p>
+      <WorldMap data-test="enterWorld" :player="character" :height="500" :width="500" :scale="scale" @moveUp="moveUp"
+        @moveDown="moveDown" @moveLeft="moveLeft" @moveRight="moveRight" @playerUpdated="handlePlayerUpdate" />
+    </div>
+    <div>
+      <Chat :player="character" />
+    </div>
   </div>
 </template>
 
@@ -59,4 +55,15 @@ const moveRight = async () => {
     x: character.value.character_location.x,
   });
 };
+
+const handlePlayerUpdate = updatedPlayer => {
+  character.value = updatedPlayer;
+};
 </script>
+
+<style>
+.main-container {
+  display: flex;
+
+}
+</style>

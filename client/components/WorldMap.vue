@@ -41,6 +41,9 @@ const { height, width, scale, player } = defineProps([
 const canvasElement = ref(null);
 const context = ref(null);
 const selected = ref(null);
+const direction = ref(null);
+const ws = ref(null);
+const otherPlayers = ref([]);
 
 const offset = computed(() => ({
   x: (width - scale) / 2,
@@ -56,6 +59,7 @@ onMounted(async () => {
   setupCanvasClickListener();
   worldMapImage.value.src = "images/world.png";
   worldMapImage.value.onload = render; // Set the render function to be called once the image is loaded
+  initializeWebSocket();
 });
 
 function render() {
@@ -66,6 +70,11 @@ function render() {
   renderPlaces();
   renderPlayer();
 
+  // Draw other players
+  otherPlayers.value.forEach(otherPlayer => {
+    drawOtherPlayer(otherPlayer.location);
+  });
+
 }
 
 
@@ -73,9 +82,10 @@ watch(player.character_location, async () => {
   // update player `place` property on location change
   const { data } = await get(`/characters/place/${player.id}`);
   if (selected.value && selected.value.id === player.id) {
-    console.log(data.value.data);
     selected.value.place = data.value.data;
   }
+  player.place.name = data.value.data.name
+  emit('playerUpdated', player);
 });
 
 const places = ref([]);
@@ -94,6 +104,38 @@ const loadWorld = async () => {
 const handleCreated = async () => {
   await loadWorld();
 };
+
+function initializeWebSocket() {
+  ws.value = new WebSocket('ws://localhost:8080/ws/location/player_id'); // Replace with your actual server URL
+
+  ws.value.onopen = () => {
+    console.log('WebSocket connection established');
+  };
+
+  ws.value.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === 'updateLocation') {
+      // Update otherPlayers array with the new location of the moved player
+      const playerIndex = otherPlayers.value.findIndex(p => p.id === data.playerId);
+      if (playerIndex !== -1) {
+        otherPlayers.value[playerIndex].location = data.newLocation;
+      } else {
+        // If the player is not in the array, add them
+        otherPlayers.value.push({ id: data.playerId, location: data.newLocation });
+      }
+    }
+    render()
+  };
+
+  ws.value.onerror = (error) => {
+    console.error('WebSocket error:', error);
+  };
+
+  ws.value.onclose = () => {
+    console.log('WebSocket connection closed');
+  };
+}
+
 
 
 function initializeCanvas() {
@@ -203,7 +245,17 @@ function coordinateSystemClickEventListener(event) {
   selectPointAt(x, y);
 }
 
-const emit = defineEmits(["moveUp", "moveDown", "moveLeft", "moveRight"]);
+const emit = defineEmits(["moveUp", "moveDown", "moveLeft", "moveRight", "playerUpdated"]);
+
+function drawOtherPlayer(playerLocation) {
+  // Example: Drawing other players as blue circles
+  context.value.beginPath();
+  context.value.arc(playerLocation.x + offset.value.x, playerLocation.y + offset.value.y, scale / 2, 0, 2 * Math.PI);
+  context.value.fillStyle = 'blue';
+  context.value.fill();
+  context.value.closePath();
+}
+
 
 function move(direction) {
   console.log("move");
@@ -223,7 +275,21 @@ function move(direction) {
   }
   render();
   emit(`move${direction}`);
+
+  // Send the updated location to the server
+  const locationUpdate = {
+    type: 'updateLocation',
+    playerId: player.id, // must be unique identifier
+    newLocation: player.character_location
+  };
+  ws.value.send(JSON.stringify(locationUpdate));
 }
+
+onUnmounted(() => {
+  if (ws.value) {
+    ws.value.close();
+  }
+});
 </script>
 
 <style>
