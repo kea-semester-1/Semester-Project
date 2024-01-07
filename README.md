@@ -39,7 +39,7 @@ Look inside the `Makefile`, to see every command available.
 ## Project Deployment
 
 - **Backend**: Deployed on Azure, accessible [here](https://rpg-project.azurewebsites.net/api/docs).
-- **Frontend**: Hosted on Vercel, available [here](https://semester-project-rd6f6hfc2-m-n-ms.vercel.app/login).
+- **Frontend**: Hosted on Vercel, available [here](https://semester-project-ochre.vercel.app/login).
 
 ## Running Tests
 
