@@ -48,7 +48,7 @@ const setupWebSocketConnection = () => {
 
 
 watch(() => props.player.place.name, (newPlace) => {
-    serverUrl.value = `ws://localhost:8080/ws/${newPlace}/${props.player.id}`;
+    serverUrl.value = `wss://rpg-project.azurewebsites.net/ws/${newPlace}/${props.player.id}`;
     setupWebSocketConnection();
 }, { deep: true });
 
@@ -62,7 +62,7 @@ const sendMessage = () => {
 
 onMounted(() => {
     if (!ws.value && props.player && props.player.place && props.player.place.name) {
-        serverUrl.value = `ws://localhost:8080/ws/${props.player.place.name}/${props.player.id}`;
+        serverUrl.value = `wss://rpg-project.azurewebsites.net/ws/${props.player.place.name}/${props.player.id}`;
         setupWebSocketConnection();
     }
 });

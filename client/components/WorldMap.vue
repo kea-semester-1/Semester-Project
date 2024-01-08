@@ -106,7 +106,7 @@ const handleCreated = async () => {
 };
 
 function initializeWebSocket() {
-  ws.value = new WebSocket('ws://localhost:8080/ws/location/player_id'); // Replace with your actual server URL
+  ws.value = new WebSocket('wss://rpg-project.azurewebsites.net/ws/location/player_id'); // Replace with your actual server URL
 
   ws.value.onopen = () => {
     console.log('WebSocket connection established');
