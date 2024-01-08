@@ -77,6 +77,7 @@ class WebUser(FastHttpUser):
     def get_character_place_details(self) -> None:
         """Get the place details for specific character."""
 
+        # T
         with self.client.get(
             url=f"{PREFIX}/characters",
             headers=self.token_header,
