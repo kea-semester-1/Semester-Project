@@ -9,7 +9,7 @@ from rpg_api.utils import models
 from typing import Any
 from sqlalchemy import orm
 from rpg_api.web.api.postgres.auth import auth_utils
-
+from uuid import uuid4
 
 fake = Faker()
 
@@ -22,7 +22,7 @@ class BaseUserFactory(AsyncFactory[models.BaseUser]):
     class Meta:
         model = models.BaseUser
 
-    email = factory.LazyAttribute(lambda _: fake.email())
+    email = factory.LazyAttribute(lambda _: fake.email() + str(uuid4())[:7])
     password = auth_utils.hash_password("password")
     status = enums.UserStatus.active
 
@@ -119,7 +119,7 @@ class CharacterFactory(AsyncFactory[models.Character]):
     class Meta:
         model = models.Character
 
-    character_name = factory.LazyAttribute(lambda _: fake.name())
+    character_name = factory.LazyAttribute(lambda _: fake.name() + str(uuid4())[:7])
 
     base_class = CREATE
     character_location = CREATE

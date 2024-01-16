@@ -154,6 +154,7 @@ class Character(Base):
     __table_args__ = (
         sa.Index("idx_character_name", character_name),
         sa.Index("idx_character_level", level),
+        sa.Index("idx_character_user_id", user_id),
     )
 
 

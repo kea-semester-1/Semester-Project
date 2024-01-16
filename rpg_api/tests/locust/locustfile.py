@@ -10,7 +10,7 @@ PREFIX = "/api/postgres"
 class WebUser(FastHttpUser):
     """Default user for load testing."""
 
-    wait_time = between(1, 2)
+    # wait_time = between(1, 2)
 
     def on_start(self) -> None:
         """
